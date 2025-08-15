@@ -65,8 +65,7 @@ func configureSettings() error {
 		return fmt.Errorf("error reading settings file from %s: %w", settingsPath, err)
 	}
 
-	err = json.Unmarshal(data, &settings)
-	if err != nil {
+	if err = json.Unmarshal(data, &settings); err != nil {
 		return fmt.Errorf("error unmarshaling vscode settings: %w", err)
 	}
 
@@ -75,6 +74,7 @@ func configureSettings() error {
 		settings["editor.fontFamily"] = "JetBrainsMono Nerd Font"
 		settings["editor.fontSize"] = 13
 		settings["editor.fontLigatures"] = true
+		settings["terminal.integrated.fontFamily"] = "JetBrainsMono Nerd Font"
 	}
 
 	// theme
@@ -88,6 +88,7 @@ func configureSettings() error {
 	if err != nil {
 		return fmt.Errorf("failed to marshal new settings: %w", err)
 	}
+
 	err = os.WriteFile(settingsPath, newData, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to write new settings: %w", err)
@@ -98,7 +99,7 @@ func configureSettings() error {
 }
 
 func getFont() error {
-	fontsDir := "C:\\Windows\\Fonts\\"
+	fontsDir := filepath.Join("C:", "Windows", "Fonts")
 
 	// check for font first
 	cmd := exec.Command("cmd", "/C", "dir", "/s", fontsDir, "/b", "/o:gn")

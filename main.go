@@ -24,8 +24,7 @@ func main() {
 	case "vscode":
 		setupVscode()
 	case "commandline":
-		// TODO
-		fail("TODO")
+		setupCommandLine()
 	default:
 		fail("Unsupported argument")
 	}
