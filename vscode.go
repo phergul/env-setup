@@ -17,35 +17,26 @@ import (
 	"golang.org/x/sys/windows/registry"
 )
 
-const (
-	HWND_BROADCAST = 0xffff
-	WM_FONTCHANGE  = 0x001D
-)
-
-var (
-	user32       = windows.NewLazySystemDLL("user32.dll")
-	sendMessageW = user32.NewProc("SendMessageW")
-)
-
 var extensionIds = []string{
 	"fogio.jetbrains-file-icon-theme",
 	"chadbaileyvh.oled-pure-black---vscode",
 	"esbenp.prettier-vscode",
 }
 
-func main() {
-	err := InstallExtensions()
+// Sets up vscode
+func setupVscode() {
+	err := installExtensions()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = ConfigureSettings()
+	err = configureSettings()
 	if err != nil {
 		log.Fatalln(err)
 	}
 }
 
-func InstallExtensions() error {
+func installExtensions() error {
 	for _, id := range extensionIds {
 		cmd := exec.Command("code", "--install-extension", id)
 		fmt.Println("Installing extension: ", id)
@@ -59,7 +50,7 @@ func InstallExtensions() error {
 	return nil
 }
 
-func ConfigureSettings() error {
+func configureSettings() error {
 	// get font
 	fontErr := getFont()
 	if fontErr != nil {
@@ -88,6 +79,7 @@ func ConfigureSettings() error {
 
 	// theme
 	settings["workbench.colorTheme"] = "Dark+ Pure Black (OLED)"
+	settings["workbench.iconTheme"] = "jetbrains-file-icon-theme-auto"
 
 	// autosave
 	settings["files.autoSave"] = "afterDelay"
@@ -191,6 +183,17 @@ func registerFontInRegistry(fontFile string) error {
 	}
 	return nil
 }
+
+// windows shit
+const (
+	HWND_BROADCAST = 0xffff
+	WM_FONTCHANGE  = 0x001D
+)
+
+var (
+	user32       = windows.NewLazySystemDLL("user32.dll")
+	sendMessageW = user32.NewProc("SendMessageW")
+)
 
 func broadcastFontChange() {
 	sendMessageW.Call(uintptr(HWND_BROADCAST), uintptr(WM_FONTCHANGE), 0, 0)
