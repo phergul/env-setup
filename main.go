@@ -20,8 +20,7 @@ func main() {
 
 	if len(os.Args) > 2 {
 		fail("Missing required argument")
-	}
-	if len(os.Args) < 2 {
+	} else if len(os.Args) < 2 {
 		fail("Only one argument supported")
 	}
 

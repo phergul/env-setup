@@ -28,11 +28,14 @@ var gitFunctions = []string{
 func setupAliases() {
 	profilePath, err := getPowerShellProfilePath()
 	if err != nil {
-		log.Fatalln("Error getting PowerShell profile path:", err)
+		log.Fatalln("error getting PowerShell profile path:", err)
 	}
 
 	fmt.Println("Setting up aliases in PowerShell profile:", profilePath)
-	addAliasesToProfile(profilePath)
+	err = addAliasesToProfile(profilePath)
+	if err != nil {
+		log.Fatalln("error adding aliases to PowerShell profile:", err)
+	}
 }
 
 func addAliasesToProfile(profilePath string) error {
